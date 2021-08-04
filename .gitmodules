@@ -1,0 +1,3 @@
+[submodule "exp-3-tier-tf"]
+	path = exp-3-tier-tf
+	url = git@github.com:cg-dv/exp-3-tier-tf.git
