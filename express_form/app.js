@@ -95,10 +95,13 @@ client.getSecretValue({SecretId: secretName}, function(err, data) {
     
     // Code below is my own and not from template provided by AWS 
     // Code below is from Express JS MySQL connection page 
+    //console.log(secret);
     var secretObj = JSON.parse(secret);
+    //console.log("\n");
+    //console.log(secretObj["username"]);
     var mysql = require('mysql');
     var connection = mysql.createConnection({
-      host: secretObj["host"],
+        host: secretObj["host"].replace(":3306", ""),
       user: secretObj["username"],
       password: secretObj["password"],
       database: secretObj["database"]
@@ -106,10 +109,12 @@ client.getSecretValue({SecretId: secretName}, function(err, data) {
 
     connection.connect();
 
-    connection.query('SELECT * from people AS solution', function (err, rows, fields) {
+    //connection.query('SELECT * from people AS solution', function (err, rows, fields) {
+    a = connection.query('SELECT "John" FROM people', function (err, rows, fields) {
       if (err) throw err
 
-      console.log('The solution is: ', solution)
+      //console.log('The solution is: ', solution)
+      console.log('The solution is: ', a)
     });
 
     connection.end();
