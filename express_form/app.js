@@ -95,8 +95,10 @@ client.getSecretValue({SecretId: secretName}, function(err, data) {
     
     // Code below is my own and not from template provided by AWS 
     // Code below is from Express JS MySQL connection page 
+    
     var secretObj = JSON.parse(secret);
     var mysql = require('mysql');
+    var response_text = ''; 
     var connection = mysql.createConnection({
       host: secretObj["host"].replace(":3306", ""),
       user: secretObj["username"],
@@ -109,10 +111,41 @@ client.getSecretValue({SecretId: secretName}, function(err, data) {
     connection.query('SELECT * FROM people', function (err, rows, fields) {
       if (err) throw err
 
-      console.log('The solution is: ', rows)
+      //console.log('The solution is: ', rows)
+      response_text = rows
     });
 
     connection.end();
+
+    // Get public ip of current server from local text file
+    // Public IP previously fetched from instance metadata via curl and stored in local file
+
+    const fs = require('fs')
+
+    fs.readFile('public_ip.txt', 'utf8' , (err, data) => {
+      if (err) {
+        console.error(err)
+        return
+      }
+      const public_ip = data.replace('\n', '');
+    })
+
+    // Run HTTP server which returns MySQL data
+
+    const http = require('http');
+
+    const hostname = public_ip; 
+    const port = 80;
+
+    const server = http.createServer((req, res) => {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'text/plain');
+      res.end(response_text);
+    });
+
+    server.listen(port, hostname, () => {
+      console.log(`Server running at http://${hostname}:${port}/`);
+    });
 });
 
 module.exports = app;
