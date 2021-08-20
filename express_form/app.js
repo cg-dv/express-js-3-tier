@@ -120,31 +120,22 @@ client.getSecretValue({SecretId: secretName}, function(err, data) {
     // Get public ip of current server from local text file
     // Public IP previously fetched from instance metadata via curl and stored in local file
 
-    const fs = require('fs')
+    //const fs = require('fs')
 
-    fs.readFile('public_ip.txt', 'utf8' , (err, data) => {
-      if (err) {
-        console.error(err)
-        return
-      }
-      const public_ip = data.replace('\n', '');
-    })
-
-    // Run HTTP server which returns MySQL data
-
-    const http = require('http');
-
-    const hostname = public_ip; 
-    const port = 80;
-
-    const server = http.createServer((req, res) => {
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'text/plain');
-      res.end(response_text);
+    //fs.readFile('public_ip.txt', 'utf8' , (err, data) => {
+      //if (err) {
+        //console.error(err)
+        //return
+      //}
+      //const public_ip = data.replace('\n', '');
+    //})
+    
+    app.listen(3000, () => {
+      console.log("Application started and Listening on port 3000");
     });
 
-    server.listen(port, hostname, () => {
-      console.log(`Server running at http://${hostname}:${port}/`);
+    app.get("/", (req, res) => {
+      res.send(response_text);
     });
 });
 
