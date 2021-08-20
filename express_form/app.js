@@ -113,30 +113,32 @@ client.getSecretValue({SecretId: secretName}, function(err, data) {
 
       //console.log('The solution is: ', rows)
       response_text = rows
+
+      // Write MySQL data to file, set up app server to serve response containing JSON data from MySQL
+
+      //const express = require('express')
+      //const app = express()
+      const port = 3000
+
+      app.get('/', (req, res) => {
+        fs = require('fs');
+        fs.writeFile('data.txt', response_text, function (err) {
+          if (err) return console.log(err);
+          console.log('Output file written.\n');
+        })
+      })
+      
+      app.get('/', (req, res) => {
+        res.sendFile('data.txt', { root: '.' })
+      })
+
+      app.listen(port, () => {
+        console.log(`App listening at http://localhost:${port}`)
+      })
+    
     });
 
     connection.end();
-
-    // Get public ip of current server from local text file
-    // Public IP previously fetched from instance metadata via curl and stored in local file
-
-    //const fs = require('fs')
-
-    //fs.readFile('public_ip.txt', 'utf8' , (err, data) => {
-      //if (err) {
-        //console.error(err)
-        //return
-      //}
-      //const public_ip = data.replace('\n', '');
-    //})
-    
-    app.listen(3000, () => {
-      console.log("Application started and Listening on port 3000");
-    });
-
-    app.get("/", (req, res) => {
-      res.send(response_text);
-    });
 });
 
 module.exports = app;
